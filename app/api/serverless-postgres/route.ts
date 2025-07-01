@@ -7,12 +7,15 @@ const client = new ServerlessClient({
 });
 
 export async function GET() {
+  const s = performance.now();
   await client.connect();
   const result = await client.query(`SELECT * FROM teams LIMIT 1`);
   await client.clean();
+  const e = performance.now();
 
   return Response.json({
-    body: JSON.stringify({ message: result.rows[0] }),
+    body: result.rows[0],
+    perf: (e - s) / 1000,
     statusCode: 200,
   });
 }
