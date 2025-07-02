@@ -1,0 +1,21 @@
+{
+  "name": "water-pg",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387",
+  "dependencies": {
+    "@types/pg": "^8.15.4",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "next": "^15.3.4"
+  }
+}
