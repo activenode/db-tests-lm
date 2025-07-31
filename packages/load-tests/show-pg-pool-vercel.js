@@ -4,8 +4,8 @@ import { check, fail } from 'k6';
 const hostUrl = __ENV.HOST_URL;
 
 export let options = {
-  vus: 800,
-  iterations: 800,
+  vus: 1200,
+  iterations: 1200,
 };
 
 export default function () {
