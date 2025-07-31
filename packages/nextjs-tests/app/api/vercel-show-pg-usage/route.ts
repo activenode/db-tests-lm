@@ -15,6 +15,8 @@ const allowed_stats_activity_column_comparison = [
 ];
 
 export async function GET(request: NextRequest) {
+  const simulateLongRunningQuery =
+    request.nextUrl.searchParams.get("simulate_long_running_query") === "1";
   const columnFromSearch =
     request.nextUrl.searchParams.get("stats_activity_column") ?? "-";
   const stats_activity_column =
@@ -36,7 +38,12 @@ export async function GET(request: NextRequest) {
       `SELECT * FROM pg_stat_activity WHERE ${stats_activity_column} = $1`,
       [stats_activity_column_value]
     );
-    await client.query("SELECT pg_sleep(5);"); // just simulate a longer-blocking query
+
+    if (simulateLongRunningQuery) {
+      // Simulate a long-running query
+      await client.query("SELECT pg_sleep(5)");
+    }
+
     await client.release(releaseAndDestroy);
     const idleConnectionsAtEndAfterRelease = pool.idleCount;
 
