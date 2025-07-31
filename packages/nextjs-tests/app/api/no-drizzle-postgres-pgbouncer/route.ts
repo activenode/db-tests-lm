@@ -6,14 +6,14 @@ export async function GET() {
 
   const start = performance.now();
   const res = await runWithClient((c) => {
-    return c`SELECT * FROM teams LIMIT 1`;
+    return c`SELECT * FROM teams LIMIT 10`;
   });
   const end = performance.now();
 
   const perf = (end - start) / 1000;
 
   if (perf > 2) {
-    console.info("@bigger-2-pgbouncer-postgresn");
+    console.info("@bigger-2-pgbouncer-postgres");
   }
 
   // await db.end();
