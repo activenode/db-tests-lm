@@ -22,6 +22,9 @@ export async function GET(request: NextRequest) {
       ? columnFromSearch
       : "application_name";
 
+  const releaseAndDestroy: boolean =
+    request.nextUrl.searchParams.get("release_and_destroy") === "1";
+
   const stats_activity_column_value =
     request.nextUrl.searchParams.get("stats_activity_column_value") ??
     "Supavisor";
@@ -29,16 +32,16 @@ export async function GET(request: NextRequest) {
   try {
     const idleConnectionsAtStart = pool.idleCount;
     const client = await pool.connect();
-    const res = await client.query(
+    const totalOpenConnections = await client.query(
       `SELECT * FROM pg_stat_activity WHERE ${stats_activity_column} = $1`,
       [stats_activity_column_value]
     );
     await client.query("SELECT pg_sleep(5);"); // just simulate a longer-blocking query
-    await client.release();
+    await client.release(releaseAndDestroy);
     const idleConnectionsAtEndAfterRelease = pool.idleCount;
 
     return NextResponse.json({
-      rows: res.rows,
+      rows: totalOpenConnections.rows,
       idleConnectionsAtStart,
       idleConnectionsAtEndAfterRelease,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
