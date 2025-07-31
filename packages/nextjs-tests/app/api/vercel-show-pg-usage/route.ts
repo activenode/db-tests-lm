@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 
 const pool = new Pool({
@@ -9,13 +9,29 @@ const randomHash = Math.random().toString(36).substring(2, 15);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (pool as any).hash = randomHash; // Assigning a random hash to the pool for debugging purposes
 
-export async function GET() {
+const allowed_stats_activity_column_comparison = [
+  "application_name",
+  "usename",
+];
+
+export async function GET(request: NextRequest) {
+  const columnFromSearch =
+    request.nextUrl.searchParams.get("stats_activity_column") ?? "-";
+  const stats_activity_column =
+    allowed_stats_activity_column_comparison.includes(columnFromSearch)
+      ? columnFromSearch
+      : "application_name";
+
+  const stats_activity_column_value =
+    request.nextUrl.searchParams.get("stats_activity_column_value") ??
+    "Supavisor";
+
   try {
     const idleConnectionsAtStart = pool.idleCount;
     const client = await pool.connect();
     const res = await client.query(
-      "SELECT * FROM pg_stat_activity WHERE usename = $1",
-      ["pgbouncer"]
+      `SELECT * FROM pg_stat_activity WHERE ${stats_activity_column} = $1`,
+      [stats_activity_column_value]
     );
     await client.query("SELECT pg_sleep(5);"); // just simulate a longer-blocking query
     await client.release();

@@ -4,12 +4,12 @@ import { check, fail } from 'k6';
 const hostUrl = __ENV.HOST_URL;
 
 export let options = {
-  vus: 500,           // number of virtual users
-  iterations: 8000,
+  vus: 100,
+  iterations: 400,
 };
 
 export default function () {
-  const url = hostUrl + '/api/no-drizzle-pg';
+  const url = hostUrl + '/api/vercel-show-pg-usage';
 
   // Send GET request
   let res = http.get(url);
@@ -30,8 +30,7 @@ export default function () {
   // Check if required JSON properties are present
   console.log(data);
   const propertiesPresent = check(data, {
-    'property "res" exists': (d) => d.hasOwnProperty('res'),
-    'property "res.rows" exists': (d) => d.res.hasOwnProperty('rows'),
+    'property "rows" exists': (d) => d.hasOwnProperty('rows'),
     // add more properties if needed
   });
 
