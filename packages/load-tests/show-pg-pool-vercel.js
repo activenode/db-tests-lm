@@ -5,11 +5,11 @@ const hostUrl = __ENV.HOST_URL;
 
 export let options = {
   vus: 100,
-  iterations: 400,
+  iterations: 100,
 };
 
 export default function () {
-  const url = hostUrl + '/api/vercel-show-pg-usage';
+  const url = hostUrl + '/api/vercel-show-pg-usage?release_and_destroy=1';
 
   // Send GET request
   let res = http.get(url);
@@ -28,7 +28,11 @@ export default function () {
   }
 
   // Check if required JSON properties are present
-  console.log(data);
+  console.log({
+    idleBefore: data.idleConnectionsAtStart,
+    idleAfter: data.idleConnectionsAtEndAfterRelease,
+    connectionsCount: data.rows.length,
+  });
   const propertiesPresent = check(data, {
     'property "rows" exists': (d) => d.hasOwnProperty('rows'),
     // add more properties if needed

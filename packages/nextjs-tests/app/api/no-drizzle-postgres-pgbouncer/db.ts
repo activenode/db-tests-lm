@@ -13,7 +13,7 @@ export const retry = async <T>(
   retryFunction: () => Promise<T>,
   max: number = 5,
   waitTime: number = 1000,
-  name?: string,
+  name?: string
 ): Promise<T> => {
   try {
     const result = await retryFunction();
@@ -33,9 +33,9 @@ export const retry = async <T>(
 };
 
 export const runWithClient = async <T>(
-  runner: (client: postgres.Sql) => Promise<T>,
+  runner: (client: postgres.Sql) => Promise<T>
 ) => {
-  const c = postgres(process.env.__fPOSTGRES_URL!, {
+  const c = postgres(process.env.POSTGRES_PGBOUNCER_URL!, {
     max: 1,
     max_lifetime: 5,
     prepare: false,
