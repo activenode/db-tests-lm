@@ -24,6 +24,9 @@ export async function GET(request: NextRequest) {
       ? columnFromSearch
       : "application_name";
 
+  const runQueryOnTestTable =
+    request.nextUrl.searchParams.get("run_query_on_test_table") === "1";
+
   const releaseAndDestroy: boolean =
     request.nextUrl.searchParams.get("release_and_destroy") === "1";
 
@@ -34,10 +37,13 @@ export async function GET(request: NextRequest) {
   try {
     const idleConnectionsAtStart = pool.idleCount;
     const client = await pool.connect();
-    const totalOpenConnections = await client.query(
-      `SELECT * FROM pg_stat_activity WHERE ${stats_activity_column} = $1`,
-      [stats_activity_column_value]
-    );
+
+    const primaryQuery = await (runQueryOnTestTable
+      ? client.query("SELECT * FROM teams LIMIT 10")
+      : client.query(
+          `SELECT * FROM pg_stat_activity WHERE ${stats_activity_column} = $1`,
+          [stats_activity_column_value]
+        ));
 
     if (simulateLongRunningQuery) {
       // Simulate a long-running query
@@ -48,7 +54,7 @@ export async function GET(request: NextRequest) {
     const idleConnectionsAtEndAfterRelease = pool.idleCount;
 
     return NextResponse.json({
-      rows: totalOpenConnections.rows,
+      rows: primaryQuery.rows,
       idleConnectionsAtStart,
       idleConnectionsAtEndAfterRelease,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

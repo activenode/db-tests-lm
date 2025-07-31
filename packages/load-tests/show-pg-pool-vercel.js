@@ -4,12 +4,12 @@ import { check, fail } from 'k6';
 const hostUrl = __ENV.HOST_URL;
 
 export let options = {
-  vus: 100,
-  iterations: 100,
+  vus: 400,
+  iterations: 400,
 };
 
 export default function () {
-  const url = hostUrl + '/api/vercel-show-pg-usage?release_and_destroy=1';
+  const url = hostUrl + '/api/no-drizzle-postgres-pgbouncer';
 
   // Send GET request
   let res = http.get(url);
@@ -28,13 +28,13 @@ export default function () {
   }
 
   // Check if required JSON properties are present
-  console.log({
-    idleBefore: data.idleConnectionsAtStart,
-    idleAfter: data.idleConnectionsAtEndAfterRelease,
-    connectionsCount: data.rows.length,
-  });
+  // console.log({
+  //   idleBefore: data.idleConnectionsAtStart,
+  //   idleAfter: data.idleConnectionsAtEndAfterRelease,
+  //   connectionsCount: data.rows.length,
+  // });
   const propertiesPresent = check(data, {
-    'property "rows" exists': (d) => d.hasOwnProperty('rows'),
+    'property "perf" exists': (d) => d.hasOwnProperty('perf'),
     // add more properties if needed
   });
 
