@@ -17,6 +17,7 @@ export async function GET() {
       "SELECT * FROM pg_stat_activity WHERE usename = $1",
       ["pgbouncer"]
     );
+    await client.query("SELECT pg_sleep(5);"); // just simulate a longer-blocking query
     await client.release();
     const idleConnectionsAtEndAfterRelease = pool.idleCount;
 
