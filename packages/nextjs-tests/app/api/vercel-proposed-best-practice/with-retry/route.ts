@@ -48,7 +48,7 @@ function sendFunctionInfoTelemetry(
 const retry = async <T>(
   retryFunction: () => Promise<T>,
   max: number = 5,
-  waitTime: number = 500,
+  waitTime: number = 1000,
   name?: string
 ): Promise<T> => {
   try {
