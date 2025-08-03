@@ -19,7 +19,7 @@ export async function GET() {
   // await db.end();
 
   return Response.json({
-    res: res,
+    row: res,
     dbId: null,
     perf: (end - start) / 1000,
   });
