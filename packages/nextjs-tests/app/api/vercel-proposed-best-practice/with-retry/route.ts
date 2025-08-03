@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 import { setTimeout } from "timers/promises";
 
-const connectionIdleTimeoutMillis = 10_000; // Set idle timeout
+const connectionIdleTimeoutMillis = 4_500; // Set idle timeout
 const minWaitTimeUntilRelease = connectionIdleTimeoutMillis + 100; // n + 0.1sec to ensure the connection is released after the timeout and not stuck
 
 const pool = new Pool({
@@ -47,7 +47,7 @@ function sendFunctionInfoTelemetry(
 
 const retry = async <T>(
   retryFunction: () => Promise<T>,
-  max: number = 5,
+  max: number = 7,
   waitTime: number = 1000,
   name?: string
 ): Promise<T> => {
