@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import { check, fail } from 'k6';
 
-const hostUrl = __ENV.HOST_URL;
+const requestUrl = __ENV.URL;
 
 export let options = {
   vus: 1200,
@@ -9,7 +9,7 @@ export let options = {
 };
 
 export default function () {
-  const url = hostUrl + '/api/vercel-show-pg-usage/tp?release_and_destroy=1&run_query_on_test_table=1';
+  const url = requestUrl;
 
   // Send GET request
   let res = http.get(url);
@@ -36,6 +36,10 @@ export default function () {
   const propertiesPresent = check(data, {
     'property "rows" exists': (d) => d.hasOwnProperty('rows'),
     // add more properties if needed
+  });
+
+  const rowsNotEmpty = check(data, {
+    'rows is not empty': (d) => Array.isArray(d.rows) && d.rows.length > 0,
   });
 
   if (!propertiesPresent) {
