@@ -77,29 +77,34 @@ export async function GET(request: NextRequest) {
     const pool_usage_count_now = pool.function_usage_count;
     const idleConnectionsAtStart = pool.idleCount;
 
-    const r = await retry(async () => {
-      const client = await pool.connect();
+    const r = await retry(
+      async () => {
+        const client = await pool.connect();
 
-      const primaryQuery = await client.query("SELECT * FROM teams LIMIT 10");
+        const primaryQuery = await client.query("SELECT * FROM teams LIMIT 10");
 
-      await client.release();
+        await client.release();
 
-      const idleConnectionsAtEndAfterRelease = pool.idleCount;
+        const idleConnectionsAtEndAfterRelease = pool.idleCount;
 
-      waitUntil(
-        Promise.all([
-          sendFunctionInfoTelemetry(
-            identifier,
-            idleConnectionsAtStart,
-            idleConnectionsAtEndAfterRelease,
-            pool_usage_count_now
-          ),
-          setTimeout(minWaitTimeUntilRelease),
-        ])
-      );
+        waitUntil(
+          Promise.all([
+            sendFunctionInfoTelemetry(
+              identifier,
+              idleConnectionsAtStart,
+              idleConnectionsAtEndAfterRelease,
+              pool_usage_count_now
+            ),
+            setTimeout(minWaitTimeUntilRelease),
+          ])
+        );
 
-      return primaryQuery;
-    });
+        return primaryQuery;
+      },
+      5,
+      500,
+      "GET teams"
+    );
 
     return NextResponse.json({
       rows: r.rows,
