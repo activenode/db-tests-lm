@@ -45,7 +45,7 @@ function sendFunctionInfoTelemetry(
   return supabase.from("vercel_pooling_stats").insert(insertobj);
 }
 
-export const retry = async <T>(
+const retry = async <T>(
   retryFunction: () => Promise<T>,
   max: number = 5,
   waitTime: number = 500,
