@@ -34,6 +34,7 @@ function sendFunctionInfoTelemetry(
     idle_conn_at_end,
     pool_usage_count_now,
     pooling_type: "function_global_scope",
+    pool_hash: pool.hash,
   };
 
   const supabase = createClient(
