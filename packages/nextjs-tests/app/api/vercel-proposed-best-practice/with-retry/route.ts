@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 import { setTimeout } from "timers/promises";
 
-const connectionIdleTimeoutMillis = 4_500; // Set idle timeout
+const connectionIdleTimeoutMillis = 3_000; // Set idle timeout
 const minWaitTimeUntilRelease = connectionIdleTimeoutMillis + 100; // n + 0.1sec to ensure the connection is released after the timeout and not stuck
 
 const pool = new Pool({
