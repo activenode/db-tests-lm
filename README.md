@@ -8,7 +8,7 @@ You can see some of the results and conclusions in this blog article: https://ac
 On serverless platforms like Vercel, the way you connect to a database can significantly impact performance and reliability.
 
 
-# Best practice 
+# Best practice on pooling with Serverless (e.g. Vercel Fluid Compute)
 
 ## For most use cases:
 The best you can do is a combination of small pools per warm function instance + a DB proxy like PgBouncer in transaction mode (transaction pooling).
@@ -108,6 +108,14 @@ When you build a connection to the database pooler, execute e.g. 3 queries in pa
 and then cut off network access (no graceful shutdown of the process) the connections might not be released back to the pool.
 
 I tested this and `PgBouncer` kept zombie connections open _forever_ when cutting off network access abruptly - even with Transaction Pooling.
+
+# Other best practices with regards to Database connections on Serverless
+
+- Make sure the DB location e.g. `us-east-1` matches the Serverless region you're deploying to (e.g. in Project Settings -> Functions -> Advanced on Vercel)
+- Define a smart `idle_timeout` like e.g. `5 seconds` (most definitely on `postgres.js/postgres` library as otherwise connections will be kept alive forever)
+- At deployments, in theory, you need to have double amount the conns because that same amount will spike new functions -> In Vercel, to avoid killing all warm functions and having all new cold functions at deployment, use **[Rolling Releases](https://vercel.com/docs/rolling-releases)** feature (Enterprise feature)
+- Use caching where you can (Redis / in-memory / Read Replicas)
+- According to Malte Ubl (Vercel CTO), using a pool via an import with Fluid Compute or a global definition within a warm function results in the same behaviour within [Fluid Compute](https://vercel.com/docs/fluid-compute)
 
 
 # Running the load tests
