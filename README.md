@@ -2,6 +2,8 @@
 
 This repo is used for testing different Postgres connections / queries front-to-back on Vercel Fluid Compute.
 
+**Thanks to lmarena.ai for supporting this research.**
+
 You can see some of the results and conclusions in this blog article: https://activeno.de/blog/2025-06/properly-connecting-with-a-database-on-serverless/
 On serverless platforms like Vercel, the way you connect to a database can significantly impact performance and reliability.
 
